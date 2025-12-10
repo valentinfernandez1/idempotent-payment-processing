@@ -1,6 +1,4 @@
 import { apiConfig, ApiConfig } from "./api.js";
-import { dbConfig, DBConfig } from "./db.js";
-
 
 export function envOrThrow(key: string) {
     const val = process.env[key];
@@ -12,12 +10,10 @@ export function envOrThrow(key: string) {
 
 type Config = {
     api: ApiConfig
-    db: DBConfig
 }
 
 export const config: Config = {
     api: apiConfig,
-    db: dbConfig
 }
 
 
