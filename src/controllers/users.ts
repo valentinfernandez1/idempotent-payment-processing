@@ -5,6 +5,17 @@ import { prisma } from "../db/prisma";
 import validator from 'validator';
 import { createUser, getUserByEmail } from "../db/queries/users";
 
+export async function handleGetUserByEmail(req: Request, res: Response) {
+    const email = req.params.email;
+
+    if (!validator.isEmail) throw new RequestError("BadRequest", "Invalid email format");
+    
+    const user = await getUserByEmail(email);
+
+    if (!user) throw new RequestError("NotFound", "User not found");
+
+    res.status(200).json(user);
+}
 
 export async function handleUserCreation(req: Request, res: Response) {
     type parameters = {
@@ -13,17 +24,10 @@ export async function handleUserCreation(req: Request, res: Response) {
         name: string;
     };
     const params: parameters = req.body;
-    if (!params.email || !params.password || !params.name) {
-        throw new RequestError("BadRequest", "Missing required fields");
-    }
+    if (!params.email || !params.password || !params.name) throw new RequestError("BadRequest", "Missing required fields");
 
-    if (!validator.isEmail(params.email)) {
-        throw new RequestError("BadRequest", "Invalid email format");
-    }
-
-    if (await getUserByEmail(params.email)) {
-        throw new RequestError("Conflict", "Email already in use");
-    }
+    if (!validator.isEmail(params.email)) throw new RequestError("BadRequest", "Invalid email format");
+    if (await getUserByEmail(params.email)) throw new RequestError("Conflict", "Email already in use");
 
     const hashedPassword = await hash(params.password);
 
