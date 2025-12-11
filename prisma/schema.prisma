@@ -17,8 +17,8 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  name      String
-  email     String   @unique
+  name      String   @db.VarChar(50)
+  email     String   @unique @db.VarChar(255)
   password  String
   balance   Float    @default(0.00)
 

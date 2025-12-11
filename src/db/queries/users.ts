@@ -1,0 +1,39 @@
+import { PrismaClientValidationError } from '@prisma/client/runtime/client.js';
+import { PrismaClientKnownRequestError } from '../../generated/prisma/internal/prismaNamespace.js';
+import { UserCreateInput } from '../../generated/prisma/models/User.js';
+import { prisma } from '../prisma';
+
+export async function getUserByEmail(email: string, includePassword = false) {
+    return await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+        omit: {
+            password: includePassword,
+        }
+    });
+}
+
+export async function createUser(user: UserCreateInput) {
+    try {
+        return await prisma.user.create({
+            data: {
+                email: user.email,
+                password: user.password,
+                name: user.name,
+            },
+            omit: {
+                password: true,
+            }
+        });
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            throw new Error('Email already in use');
+        }
+        if (error instanceof PrismaClientValidationError) {
+            throw new Error('Invalid user data');
+        }
+
+        throw error;
+    }
+}

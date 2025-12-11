@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { RequestError } from "../utils/errors";
 import { hash } from "../utils/utils";
 import { prisma } from "../db/prisma";
+import validator from 'validator';
+import { createUser, getUserByEmail } from "../db/queries/users";
 
 
 export async function handleUserCreation(req: Request, res: Response) {
@@ -15,19 +17,17 @@ export async function handleUserCreation(req: Request, res: Response) {
         throw new RequestError("BadRequest", "Missing required fields");
     }
 
+    if (!validator.isEmail(params.email)) {
+        throw new RequestError("BadRequest", "Invalid email format");
+    }
+
+    if (await getUserByEmail(params.email)) {
+        throw new RequestError("Conflict", "Email already in use");
+    }
+
     const hashedPassword = await hash(params.password);
 
-    const user = await prisma.user.create({
-        data: {
-            email: params.email,
-            password: hashedPassword,
-            name: params.name,
-        },
-        omit: {
-            password: true,
-        }
-    });
-
+    const user = await createUser({email: params.email, password: hashedPassword, name: params.name});
 
     res.status(201).json({ message: "User created successfully", user });
 }

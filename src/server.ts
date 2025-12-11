@@ -3,7 +3,8 @@ import { config } from './config/index.js';
 import morgan from 'morgan';
 import { loggerFormat } from './utils/utils.js';
 import { errorHandlerMiddleware } from './utils/errors.js';
-import { handleUserCreation } from './controllers/users.js';
+import monitoringRoutes from './routes/monitoring.js';
+import v1Routes from './routes/v1/index.js';
 
 const PORT = config.api.port
 const app = express();
@@ -11,14 +12,8 @@ const app = express();
 app.use(morgan(loggerFormat()))
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  throw new Error()
-  //res.send('Hello, World!');
-});
-
-app.post('/api/user', (req: Request, res: Response, next: NextFunction) => {
-  Promise.resolve(handleUserCreation(req, res)).catch(next)
-})
+app.use(`/`, monitoringRoutes)
+app.use(`/v1`, v1Routes);
 
 app.use(errorHandlerMiddleware)
 
