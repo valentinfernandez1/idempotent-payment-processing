@@ -14,29 +14,44 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  name      String   @db.VarChar(50)
-  email     String   @unique @db.VarChar(255)
-  password  String
-  balance   Float    @default(0.00)
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(50)
+  email    String @unique @db.VarChar(255)
+  password String
+  balance  Float  @default(0.00)
 
-  sentPayments     Payment[] @relation("PaymentSender")
-  receivedPayments Payment[] @relation("PaymentReceiver")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  sentPayments     Payment[]      @relation("PaymentSender")
+  receivedPayments Payment[]      @relation("PaymentReceiver")
+  refreshTokens    RefreshToken[]
 }
 
 model Payment {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  status      Status
-  idempotencyKey String   @unique @db.VarChar(255)
-  amount      Float
+  id             Int    @id @default(autoincrement())
+  status         Status
+  idempotencyKey String @unique @db.VarChar(255)
+  amount         Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   senderId    Int
-  sender      User     @relation("PaymentSender", fields: [senderId], references: [id])
+  sender      User @relation("PaymentSender", fields: [senderId], references: [id])
   recipientId Int
-  recipient   User     @relation("PaymentReceiver", fields: [recipientId], references: [id])
+  recipient   User @relation("PaymentReceiver", fields: [recipientId], references: [id])
+}
+
+model RefreshToken {
+  token     String    @id @db.VarChar(255)
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum Status {
