@@ -1,32 +1,21 @@
 import { Request, Response } from "express";
 import { RequestError } from "../utils/errors";
 import { hash } from "../utils/utils";
-import { prisma } from "../db/prisma";
 import validator from 'validator';
 import { createUser, getUserByEmail } from "../db/queries/users";
+import { CreateUserDTO, EmailParam } from "../schemas/user.schema";
 
-export async function handleGetUserByEmail(req: Request, res: Response) {
-    const email = req.params.email;
-
-    if (!validator.isEmail) throw new RequestError("BadRequest", "Invalid email format");
-    
-    const user = await getUserByEmail(email);
+export async function handleGetUserByEmail(req: Request<EmailParam>, res: Response) {
+    const user = await getUserByEmail(req.params.email);
 
     if (!user) throw new RequestError("NotFound", "User not found");
 
     res.status(200).json(user);
 }
 
-export async function handleUserCreation(req: Request, res: Response) {
-    type parameters = {
-        email: string;
-        password: string;
-        name: string;
-    };
-    const params: parameters = req.body;
-    if (!params.email || !params.password || !params.name) throw new RequestError("BadRequest", "Missing required fields");
-
-    if (!validator.isEmail(params.email)) throw new RequestError("BadRequest", "Invalid email format");
+export async function handleUserCreation(req: Request<{}, any, CreateUserDTO>, res: Response) {
+    const params = req.body;
+    
     if (await getUserByEmail(params.email)) throw new RequestError("Conflict", "Email already in use");
 
     const hashedPassword = await hash(params.password);
