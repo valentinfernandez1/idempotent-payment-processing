@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
 import { RequestError } from "../utils/errors";
 import { hash } from "../utils/utils";
-import validator from 'validator';
 import { createUser, getUserByEmail } from "../db/queries/users";
 import { CreateUserDTO, EmailParam } from "../schemas/user.schema";
+import { extractJWT, JwtPayload } from "../utils/auth/auth";
 
 export async function handleGetUserByEmail(req: Request<EmailParam>, res: Response) {
+    const jwtPayload: JwtPayload = extractJWT(req)
+    console.log(jwtPayload);
     const user = await getUserByEmail(req.params.email);
-
+    
     if (!user) throw new RequestError("NotFound", "User not found");
+    if(user.id !== Number(jwtPayload.sub)) throw new RequestError("Forbidden", `Not allowed to access user information`);
 
     res.status(200).json(user);
 }
