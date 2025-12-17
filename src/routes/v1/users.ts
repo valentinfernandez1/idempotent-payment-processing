@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.get('/:email', validateParams(EmailParamSchema),(req: Request<EmailParam>, res: Response, next: NextFunction) => {
   Promise.resolve(handleGetUserByEmail(req, res)).catch(next)
- });
+});
 
 router.post('/', validateBody(CreateUserSchema),(req: Request, res: Response, next: NextFunction) => {
   Promise.resolve(handleUserCreation(req, res)).catch(next)

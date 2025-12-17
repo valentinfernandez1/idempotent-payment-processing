@@ -7,7 +7,6 @@ import { extractJWT, JwtPayload } from "../utils/auth/auth";
 
 export async function handleGetUserByEmail(req: Request<EmailParam>, res: Response) {
     const jwtPayload: JwtPayload = extractJWT(req)
-    console.log(jwtPayload);
     const user = await getUserByEmail(req.params.email);
     
     if (!user) throw new RequestError("NotFound", "User not found");

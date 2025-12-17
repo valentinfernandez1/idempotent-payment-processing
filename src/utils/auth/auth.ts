@@ -6,6 +6,7 @@ import { Request } from 'express';
 
 export type JwtPayload = Pick<jwt.JwtPayload, 'iat' | 'exp' | 'iss' | 'sub'> & { role: string }
 const iss = 'idempotent-payment-processing';
+
 // Default jwt expiration is 15 minutes
 const DEFAULT_JWT_EXPIRATION = 900
 
@@ -38,7 +39,6 @@ export function verifyJWT (token: string): JwtPayload {
 const AUTHORIZATION_HEADER = "Authorization";
 export function extractJWT(req: Request): JwtPayload {
     let token = req.get(AUTHORIZATION_HEADER);
-    console.log(token)
     if(!token) throw new RequestError("Unauthorized", "[Authorization] header not found on the request");
 
     token = token.replace('Bearer ', '');

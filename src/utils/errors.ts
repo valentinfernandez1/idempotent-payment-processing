@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from "../generated/prisma/internal/prismaNamespace";
 
 const RequestErrorInfo = {
     BadRequest: {status: 400, message: "Bad Request"},
@@ -7,6 +6,7 @@ const RequestErrorInfo = {
     Forbidden: {status: 403, message: "Forbidden"},
     NotFound: {status: 404, message: "Not Found"},
     Conflict: {status: 409, message: "Conflict"},
+    UnprocessableEntity: {status: 422, message: "Unprocessable Entity"},
 } as const;
 
 type RequestErrors = keyof typeof RequestErrorInfo;

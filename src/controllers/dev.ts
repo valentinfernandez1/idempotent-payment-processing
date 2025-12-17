@@ -22,7 +22,7 @@ export async function handleGrantFreeBalance(req: Request<{}, any, GrantDTO>, re
     const { balance, email } = req.body;
 
     const user = await getUserByEmail(email)
-    if(!user) throw new RequestError("NotFound", `User with email ${email} does not exist`);
+    if(!user) throw new RequestError("NotFound", `User not found`);
 
     const updatedUser = await grantBalance(user.id, balance);
 

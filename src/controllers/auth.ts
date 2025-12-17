@@ -10,7 +10,7 @@ export async function handleUserLogin(req: Request<{}, any, LoginDTO>, res: Resp
 
     const user = await getUserByEmail(email, {omitPassword: false, omitRole: false});
 
-    if(!user) throw new RequestError("NotFound", `User with email ${email} does not exist`);
+    if(!user) throw new RequestError("NotFound", `User not found`);
     if(!(await verifyHash(password, user.password!))) throw new RequestError("Unauthorized", "Incorrect Password");
 
     const token = createJWT(user.id.toString(), user.role.name)

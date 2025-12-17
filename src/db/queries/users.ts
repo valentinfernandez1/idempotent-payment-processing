@@ -8,7 +8,20 @@ export const DefaultUserOmits = {password: true, roleId: true}
 export async function getUserByEmail(email: string, options?: {omitPassword: boolean, omitRole: boolean}) {
     return await prisma.user.findUnique({
         where: {
-            email: email,
+            email,
+        },  
+        omit: options? {
+            password: options.omitPassword,
+            roleId: options.omitPassword,
+        } : DefaultUserOmits,
+        include: {role: !(options? options.omitPassword : DefaultUserOmits.roleId)}
+    });
+}
+
+export async function getUserById(id: number, options?: {omitPassword: boolean, omitRole: boolean}) {
+    return await prisma.user.findUnique({
+        where: {
+            id,
         },  
         omit: options? {
             password: options.omitPassword,
@@ -40,3 +53,20 @@ export async function createUser(user: UserCreateInput) {
     }
 }
 
+export async function updateUsersBalance(balances: Record<string, BalanceVariance>) {
+    const transactions = Object
+        .entries(balances)
+        .map(([userId, amount]) => prisma.user.update({
+            data: {
+                balance: amount 
+            },
+            where:{
+                id: Number(userId)
+            }
+        }));
+    const result = await prisma.$transaction(transactions)
+
+    return result
+}
+
+export type BalanceVariance = {increment: number} | {decrement: number}

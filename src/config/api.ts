@@ -14,7 +14,7 @@ function disernPlatform(platform: string): Platform {
 export type ApiConfig = {
     platform: Platform,
     port: number,
-    jwtSecret: string
+    jwtSecret: string,
 }   
 
 export const apiConfig: ApiConfig = {
