@@ -25,6 +25,5 @@ export async function handlePayment(req: Request<UserIdParam, any, PaymentDTO>, 
         [paymentRecipient.id]: {increment: amount}
     })
 
-
-    res.status(200).json({message: "Payment was succesful", result})
+    res.status(200).json({message: "Payment was succesful", body: result})
 }
