@@ -23,7 +23,7 @@ export const validateParams = (schema: ZodType) => (req: Request, res: Response,
 
     if (!result.success) {
       return res.status(400).json({
-        errors: z.treeifyError(result.error).properties!,
+        errors: z.treeifyError(result.error),
       });
     }   
 

@@ -3,14 +3,18 @@ import { PrismaClientKnownRequestError } from '../../generated/prisma/internal/p
 import { UserCreateInput } from '../../generated/prisma/models/User.js';
 import { prisma } from '../prisma';
 
-export async function getUserByEmail(email: string, includePassword = false) {
+export const DefaultUserOmits = {password: true, roleId: true}
+
+export async function getUserByEmail(email: string, options?: {omitPassword: boolean, omitRole: boolean}) {
     return await prisma.user.findUnique({
         where: {
             email: email,
-        },
-        omit: {
-            password: includePassword,
-        }
+        },  
+        omit: options? {
+            password: options.omitPassword,
+            roleId: options.omitPassword,
+        } : DefaultUserOmits,
+        include: {role: !(options? options.omitPassword : DefaultUserOmits.roleId)}
     });
 }
 
@@ -22,9 +26,7 @@ export async function createUser(user: UserCreateInput) {
                 password: user.password,
                 name: user.name,
             },
-            omit: {
-                password: true,
-            }
+            omit: DefaultUserOmits
         });
     } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
@@ -37,3 +39,4 @@ export async function createUser(user: UserCreateInput) {
         throw error;
     }
 }
+

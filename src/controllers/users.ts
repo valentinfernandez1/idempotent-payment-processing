@@ -14,13 +14,13 @@ export async function handleGetUserByEmail(req: Request<EmailParam>, res: Respon
 }
 
 export async function handleUserCreation(req: Request<{}, any, CreateUserDTO>, res: Response) {
-    const params = req.body;
+    const {email, name, password} = req.body;
     
-    if (await getUserByEmail(params.email)) throw new RequestError("Conflict", "Email already in use");
+    if (await getUserByEmail(email)) throw new RequestError("Conflict", "Email already in use");
+    
+    const hashedPassword = await hash(password);
 
-    const hashedPassword = await hash(params.password);
-
-    const user = await createUser({email: params.email, password: hashedPassword, name: params.name});
+    const user = await createUser({email: email, password: hashedPassword, name: name});
 
     res.status(201).json({ message: "User created successfully", user });
 }

@@ -23,9 +23,33 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
+  roleId Int  @default(2)
+  role   Role @relation(fields: [roleId], references: [id])
+
   sentPayments     Payment[]      @relation("PaymentSender")
   receivedPayments Payment[]      @relation("PaymentReceiver")
   refreshTokens    RefreshToken[]
+}
+
+model Role {
+  id   Int      @id @default(autoincrement())
+  name RoleName
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  users User[]
+}
+
+model RefreshToken {
+  token     String    @id @db.VarChar(255)
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Payment {
@@ -43,15 +67,9 @@ model Payment {
   recipient   User @relation("PaymentReceiver", fields: [recipientId], references: [id])
 }
 
-model RefreshToken {
-  token     String    @id @db.VarChar(255)
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  revokedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+enum RoleName {
+  ADMIN
+  USER
 }
 
 enum Status {
