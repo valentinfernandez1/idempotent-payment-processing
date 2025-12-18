@@ -4,10 +4,12 @@ import { PaymentDTO } from "../schemas/payment.schema";
 import { UserIdParam } from "../schemas/user.schema";
 import { RequestError } from "../utils/errors";
 import { getUserById, updateUsersBalance } from "../db/queries/users";
+import { getIdempotencyHeader } from "../utils/utils";
 
 export async function handlePayment(req: Request<UserIdParam, any, PaymentDTO>, res: Response){
     const { amount, recipient } = req.body;
     const {userId} = req.params;
+    const idempotencyKey = getIdempotencyHeader(req);
     const token: JwtPayload = extractJWT(req);
 
     if (token.sub !== userId) throw new RequestError("Forbidden", "Not allowed to access this resource");

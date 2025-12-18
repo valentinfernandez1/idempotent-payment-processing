@@ -53,10 +53,10 @@ model RefreshToken {
 }
 
 model Payment {
-  id             Int    @id @default(autoincrement())
+  id             Int    @id @default(autoincrement()) 
   status         Status
-  idempotencyKey String @unique @db.VarChar(255)
   amount         Float
+  statusMessage  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -65,6 +65,19 @@ model Payment {
   sender      User @relation("PaymentSender", fields: [senderId], references: [id])
   recipientId Int
   recipient   User @relation("PaymentReceiver", fields: [recipientId], references: [id])
+
+  idempotencyKey IdempotencyKey?
+}
+
+model IdempotencyKey {
+  id String @id @db.VarChar(128) @unique
+
+  paymentId Int @unique
+  payment Payment @relation(fields: [paymentId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
 }
 
 enum RoleName {

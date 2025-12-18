@@ -62,11 +62,11 @@ export async function updateUsersBalance(balances: Record<string, BalanceVarianc
             },
             where:{
                 id: Number(userId)
-            }
+            },
+            omit: DefaultUserOmits
         }));
-    const result = await prisma.$transaction(transactions)
 
-    return result
+    return await prisma.$transaction(transactions);
 }
 
 export type BalanceVariance = {increment: number} | {decrement: number}
