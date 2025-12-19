@@ -52,21 +52,3 @@ export async function createUser(user: UserCreateInput) {
         throw error;
     }
 }
-
-export async function updateUsersBalance(balances: Record<string, BalanceVariance>) {
-    const transactions = Object
-        .entries(balances)
-        .map(([userId, amount]) => prisma.user.update({
-            data: {
-                balance: amount 
-            },
-            where:{
-                id: Number(userId)
-            },
-            omit: DefaultUserOmits
-        }));
-
-    return await prisma.$transaction(transactions);
-}
-
-export type BalanceVariance = {increment: number} | {decrement: number}
