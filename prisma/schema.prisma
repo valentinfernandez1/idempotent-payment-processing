@@ -54,7 +54,7 @@ model RefreshToken {
 
 model Payment {
   id            Int     @id @default(autoincrement())
-  status        Status
+  status        Status  @default(VALIDATED)
   amount        Float
   statusMessage String?
 
