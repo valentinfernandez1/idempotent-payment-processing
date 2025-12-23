@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { handleGetUserByEmail, handleUserCreation } from '../../controllers/users';
-import { validateBody, validateParams } from '../../middlewares/validate';
+import { extractJWTMiddleware, validateBody, validateParams } from '../../middlewares/validation';
 import { CreateUserSchema, EmailParam, EmailParamSchema } from '../../schemas/user.schema';
 const router = express.Router()
 

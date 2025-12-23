@@ -25,9 +25,8 @@ export async function consolidatePayment(paymentId: number, status: Status, stat
         if (!payment) {
             throw new RequestError("NotFound", "Payment not found");
         }
-
         if (status === "APPROVED"){
-            await prisma.user.update({
+            await tx.user.update({
                 data: {
                     balance: {decrement: payment.amount} 
                 },
@@ -35,17 +34,17 @@ export async function consolidatePayment(paymentId: number, status: Status, stat
                     id: payment.senderId
                 }
             })
-            await prisma.user.update({
+            await tx.user.update({
                 data: {
                     balance: {increment: payment.amount} 
                 },
                 where:{
-                    id: payment.senderId
+                    id: payment.recipientId
                 }
             })
         }
 
-        return await prisma.payment.update({
+        return await tx.payment.update({
             where: {id: payment.id},
             data: {
                 status,

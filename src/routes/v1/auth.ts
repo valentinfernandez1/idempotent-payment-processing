@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { validateBody } from '../../middlewares/validate';
+import { validateBody } from '../../middlewares/validation';
 import { LoginSchema } from '../../schemas/auth.schema';
 import { handleUserLogin } from '../../controllers/auth';
 const router = express.Router()

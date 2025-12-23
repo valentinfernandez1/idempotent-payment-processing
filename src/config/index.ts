@@ -10,10 +10,14 @@ export function envOrThrow(key: string) {
 
 type Config = {
     api: ApiConfig
+    db: {
+        redisUrl: string
+    }
 }
 
 export const config: Config = {
     api: apiConfig,
+    db: {redisUrl: envOrThrow("REDIS_URL")}
 }
 
 

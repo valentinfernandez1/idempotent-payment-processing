@@ -15,10 +15,12 @@ export type ApiConfig = {
     platform: Platform,
     port: number,
     jwtSecret: string,
+    stripe: string
 }   
 
 export const apiConfig: ApiConfig = {
     platform: disernPlatform(envOrThrow("PLATFORM")),
     port: parseInt(envOrThrow("API_PORT")),
     jwtSecret: envOrThrow("JWT_SECRET"),
+    stripe: envOrThrow("STRIPE_API_KEY")
 }

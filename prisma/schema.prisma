@@ -86,7 +86,7 @@ enum RoleName {
 
 enum Status {
   VALIDATED
-  PROCESSING
+  PENDING
   APPROVED
   REJECTED
 }

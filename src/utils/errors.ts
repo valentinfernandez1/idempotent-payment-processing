@@ -18,11 +18,3 @@ export class RequestError extends Error {
         this.code = RequestErrorInfo[requestError].status;
     }
 }
-
-export function errorHandlerMiddleware(err: Error, req: Request, res: Response, next: NextFunction) {
-    if (err instanceof RequestError) {
-        return res.status(err.code).json({ error: err.message });
-    }
-
-    res.status(500).json({ error: err.message || "Something went wrong on our end" });
-}
