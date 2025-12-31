@@ -1,13 +1,14 @@
-import express, { NextFunction, Request, Response } from 'express'
-import { config } from './config/index.js';
+import express from 'express'
 import morgan from 'morgan';
-import { loggerFormat } from './utils/utils.js';
-import { monitoringRoutes, v1Routes, webhookRoutes } from './routes/index.js';
-import { initRedis } from './db/redis.js';
+import { config } from './config/index.js';
+import { initRedis, initPrisma } from './db';
 import { errorHandlerMiddleware } from './middlewares/error.js';
+import { monitoringRoutes, v1Routes, webhookRoutes } from './routes/index.js';
+import { loggerFormat } from './utils/utils.js';
 
 async function bootstrap() {
-  await initRedis()
+  await initRedis();
+  await initPrisma();
   const app = express();
 
   app.use(morgan(loggerFormat()))

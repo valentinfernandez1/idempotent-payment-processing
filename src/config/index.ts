@@ -1,4 +1,5 @@
 import { apiConfig, ApiConfig } from "./api.js";
+import { dbConfig, StorageConfig } from "./db.js";
 
 export function envOrThrow(key: string) {
     const val = process.env[key];
@@ -10,14 +11,11 @@ export function envOrThrow(key: string) {
 
 type Config = {
     api: ApiConfig
-    db: {
-        redisUrl: string
-    }
+    db: StorageConfig
 }
 
 export const config: Config = {
     api: apiConfig,
-    db: {redisUrl: envOrThrow("REDIS_URL")}
+    db: dbConfig
 }
-
 
